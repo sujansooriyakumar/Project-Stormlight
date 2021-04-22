@@ -8,64 +8,56 @@ public class CharacterMovement : MonoBehaviour
     Animator animator;
     public Transform cam;
     public float speed = 6f;
-    float turnSmoothTime = 0.1f;
-    float turnSmoothVelocity;
+    float horizontal;
+    float vertical;
     public bool groundedPlayer;
-    private float jumpHeight = 8.0f;
-    Vector3 direction;
-    private float gravityValue = -9.81f;
+    private float jumpHeight = 15.0f;
+    public Vector3 direction;
+    Vector3 jumpDirection;
+    private float gravityValue = -20f;
+    public GameObject followTarget;
+
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        jumpDirection = Vector3.zero;
+
     }
 
     private void Update()
     {
+        //if (controller.isGrounded && Input.GetButton("Jump"))
+        //{
+        //    /*
+        //     * Jumping
+        //     */
+
+        //    animator.SetTrigger("Jump");
+
+        //}
 
         /*
          * Calculate player movement and rotation
          */
-
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        if (controller.isGrounded)
-        {
-            direction = new Vector3(horizontal, 0, vertical).normalized;
-            /*
-             * Jumping
-             */
-            if (Input.GetButton("Jump"))
-            {
-                animator.SetTrigger("Jump");
-            }
-
-       
-
-
-        }
-        if (direction.magnitude >= 0.1f)
-        {
-            // Adjust player rotation
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            
-        }
-      direction.y += gravityValue * Time.deltaTime;
-            // Move the player
-            controller.Move(direction * speed * Time.deltaTime);
-            groundedPlayer = controller.isGrounded;
-
-
+        jumpDirection.y += gravityValue * Time.deltaTime;
+        controller.Move(jumpDirection * Time.deltaTime);
+        groundedPlayer = controller.isGrounded;
+        horizontal = GetComponent<PlayerInput>()._move.x;
+        vertical = GetComponent<PlayerInput>()._move.y;
         UpdateAnimations();
+        Vector3 forwardMove = transform.forward * GetComponent<PlayerInput>()._move.y; 
+        Vector3 sideMove = transform.right * GetComponent<PlayerInput>()._move.x;
+        direction = forwardMove + sideMove;
 
+        controller.Move(direction * speed * Time.deltaTime);
+      
     }
 
     public void Jump()
     {
-        direction.y = jumpHeight;
+        jumpDirection.y = jumpHeight;
         animator.ResetTrigger("Jump");
     }
 
@@ -75,7 +67,7 @@ public class CharacterMovement : MonoBehaviour
        * Walk animation
        */
 
-        if (direction.x != 0 || direction.z != 0)
+        if (horizontal != 0 || vertical != 0)
         {
             animator.SetBool("Walking", true);
         }
@@ -88,13 +80,13 @@ public class CharacterMovement : MonoBehaviour
         * Run animation
         */
 
-        if (Input.GetButton("Run"))
+        if (GetComponent<PlayerInput>().running)
         {
-            speed = 8.0f;
+            speed = 12.0f;
             animator.SetBool("Run", true);
 
         }
-        if (Input.GetButtonUp("Run"))
+        if (!GetComponent<PlayerInput>().running)
         {
             speed = 6.0f;
             animator.SetBool("Run", false);
@@ -111,4 +103,7 @@ public class CharacterMovement : MonoBehaviour
             animator.SetBool("Grounded", false);
         }
     }
+
+
+
 }
