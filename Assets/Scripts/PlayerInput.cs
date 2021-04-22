@@ -38,7 +38,7 @@ public class PlayerInput : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        GetComponent<Animator>().SetTrigger("Jump");
+        if(GetComponent<CharacterMovement>().groundedPlayer) GetComponent<Animator>().SetTrigger("Jump");
     }
 
     public void OnRun(InputValue value)
@@ -82,6 +82,18 @@ public class PlayerInput : MonoBehaviour
     {
         if(target) target.GetComponent<Outline>().enabled = false;
         target = null;
+    }
+
+    public void OnAbsorb(InputValue value)
+    {
+        if (value.Get<float>() > 0)
+        {
+            GetComponent<LightAbsorption>().absorbing = true;
+        }
+        else
+        {
+            GetComponent<LightAbsorption>().absorbing = false;
+        }
     }
 
     public GameObject followTransform;
