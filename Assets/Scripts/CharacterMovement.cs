@@ -7,15 +7,14 @@ public class CharacterMovement : MonoBehaviour
     CharacterController controller;
     Animator animator;
     public Transform cam;
-    public float speed = 6f;
     float horizontal;
     float vertical;
     public bool groundedPlayer;
-    private float jumpHeight = 15.0f;
     public Vector3 direction;
     Vector3 jumpDirection;
     private float gravityValue = -20f;
     public GameObject followTarget;
+    PlayerStats stats;
 
 
     private void Start()
@@ -23,20 +22,12 @@ public class CharacterMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         jumpDirection = Vector3.zero;
+        stats = GetComponent<PlayerStats>();
 
     }
 
     private void Update()
     {
-        //if (controller.isGrounded && Input.GetButton("Jump"))
-        //{
-        //    /*
-        //     * Jumping
-        //     */
-
-        //    animator.SetTrigger("Jump");
-
-        //}
 
         /*
          * Calculate player movement and rotation
@@ -51,13 +42,13 @@ public class CharacterMovement : MonoBehaviour
         Vector3 sideMove = transform.right * GetComponent<PlayerInput>()._move.x;
         direction = forwardMove + sideMove;
 
-        controller.Move(direction * speed * Time.deltaTime);
+        controller.Move(direction * stats.speed * Time.deltaTime);
       
     }
 
     public void Jump()
     {
-        jumpDirection.y = jumpHeight;
+        jumpDirection.y = stats.jumpHeight;
         animator.ResetTrigger("Jump");
     }
 
@@ -82,13 +73,13 @@ public class CharacterMovement : MonoBehaviour
 
         if (GetComponent<PlayerInput>().running)
         {
-            speed = 12.0f;
+            stats.speed = 12.0f;
             animator.SetBool("Run", true);
 
         }
         if (!GetComponent<PlayerInput>().running)
         {
-            speed = 6.0f;
+            stats.speed = 6.0f;
             animator.SetBool("Run", false);
         }
 

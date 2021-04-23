@@ -8,9 +8,13 @@ public class LightAbsorption : MonoBehaviour
     // every frame drain light from source
     // stormlight increases
 
-    public float stormLight= 0.0f;
     public bool absorbing = false;
+    PlayerStats stats;
 
+    private void Start()
+    {
+        stats = GetComponent<PlayerStats>();
+    }
     private void Update()
     {
         if (absorbing) Absorb();
@@ -23,8 +27,11 @@ public class LightAbsorption : MonoBehaviour
         {
             if (c.gameObject.GetComponent<Light>())
             {
-                c.gameObject.GetComponent<Light>().intensity -= 0.0005f;
-                stormLight += 1.0f;
+                if (c.gameObject.GetComponent<Light>().intensity > 0)
+                {
+                    c.gameObject.GetComponent<Light>().intensity -= 0.0005f;
+                    stats.stormlight += 0.0005f;
+                }
             }
         }
     }

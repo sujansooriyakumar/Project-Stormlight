@@ -21,10 +21,15 @@ public class PlayerInput : MonoBehaviour
 
     public float speed = 1f;
     public Camera camera;
-    public GameObject target;
     GameObject selected;
+    PlayerStats stats;
 
- 
+    private void Start()
+    {
+        stats = GetComponent<PlayerStats>();
+    }
+
+
 
     public void OnMove(InputValue value)
     {
@@ -58,18 +63,18 @@ public class PlayerInput : MonoBehaviour
     {
         if(selected != null)
         {
-            if(target != null)
+            if(stats.target != null)
             {
-                target.GetComponent<Outline>().enabled = false;
+                stats.target.GetComponent<Outline>().enabled = false;
             }
-            target = selected;
-            if(target.GetComponent<Outline>() == null)
+            stats.target = selected;
+            if(stats.target.GetComponent<Outline>() == null)
             {
-                target.AddComponent<Outline>();
+                stats.target.AddComponent<Outline>();
             }
             else
             {
-                target.GetComponent<Outline>().enabled = true;
+                stats.target.GetComponent<Outline>().enabled = true;
             }
         }
 
@@ -80,8 +85,8 @@ public class PlayerInput : MonoBehaviour
 
     public void OnDeselect(InputValue value)
     {
-        if(target) target.GetComponent<Outline>().enabled = false;
-        target = null;
+        if(stats.target) stats.target.GetComponent<Outline>().enabled = false;
+        stats.target = null;
     }
 
     public void OnAbsorb(InputValue value)
@@ -93,6 +98,19 @@ public class PlayerInput : MonoBehaviour
         else
         {
             GetComponent<LightAbsorption>().absorbing = false;
+        }
+    }
+
+    public void OnActivate(InputValue value)
+    {
+        if(value.Get<float>() > 0)
+        {
+            GetComponent<PowerUsage>().activate = true;
+        }
+
+        else
+        {
+            GetComponent<PowerUsage>().activate = false;
         }
     }
 
@@ -123,11 +141,10 @@ public class PlayerInput : MonoBehaviour
         angles.z = 0;
 
         var angle = followTransform.transform.localEulerAngles.x;
-
         //Clamp the Up/Down rotation
-        if (angle > 180 && angle < 340)
+        if (angle > 180 && angle < 300)
         {
-            angles.x = 340;
+            angles.x = 300;
         }
         else if (angle < 180 && angle > 40)
         {
@@ -170,11 +187,8 @@ public class PlayerInput : MonoBehaviour
 
     void ShootRay()
     {
-        // Bit shift the index of the layer (8) to get a bit mask
+        // ignore ground layer
         int layerMask = 1 << 8;
-
-        // This would cast rays only against colliders in layer 8.
-        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
         layerMask = ~layerMask;
         RaycastHit hit;
         if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, 75.0f, layerMask))
