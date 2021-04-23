@@ -11,8 +11,8 @@ public class CharacterMovement : MonoBehaviour
     float vertical;
     public bool groundedPlayer;
     public Vector3 direction;
-    Vector3 jumpDirection;
-    private float gravityValue = -20f;
+    public Vector3 jumpDirection;
+    public Vector3 gravity;
     public GameObject followTarget;
     PlayerStats stats;
 
@@ -22,6 +22,7 @@ public class CharacterMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         jumpDirection = Vector3.zero;
+        gravity = new Vector3(0, -9.8f, 0);
         stats = GetComponent<PlayerStats>();
 
     }
@@ -32,8 +33,8 @@ public class CharacterMovement : MonoBehaviour
         /*
          * Calculate player movement and rotation
          */
-        jumpDirection.y += gravityValue * Time.deltaTime;
-        controller.Move(jumpDirection * Time.deltaTime);
+        if (!groundedPlayer) jumpDirection += gravity * Time.deltaTime;
+        controller.Move(jumpDirection.normalized);
         groundedPlayer = controller.isGrounded;
         horizontal = GetComponent<PlayerInput>()._move.x;
         vertical = GetComponent<PlayerInput>()._move.y;
@@ -48,7 +49,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void Jump()
     {
-        jumpDirection.y = stats.jumpHeight;
+        jumpDirection = transform.up*2;
         animator.ResetTrigger("Jump");
     }
 
@@ -73,13 +74,13 @@ public class CharacterMovement : MonoBehaviour
 
         if (GetComponent<PlayerInput>().running)
         {
-            stats.speed = 12.0f;
+            stats.speed = 2.0f;
             animator.SetBool("Run", true);
 
         }
         if (!GetComponent<PlayerInput>().running)
         {
-            stats.speed = 6.0f;
+            stats.speed = 1.0f;
             animator.SetBool("Run", false);
         }
 
@@ -95,6 +96,17 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
+    public void SetGravitationalPull(Vector3 _gravity)
+    {
+        gravity = _gravity;
+        jumpDirection = Vector3.zero;
 
+    }
+
+    public void ResetGravitationalPull()
+    {
+        gravity = new Vector3(0, -9.8f, 0);
+        jumpDirection = Vector3.zero;
+    }
 
 }

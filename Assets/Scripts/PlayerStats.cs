@@ -12,11 +12,17 @@ public class PlayerStats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        speed = 6.0f;
-        stormlight = 0.0f;
+        speed = 1.0f;
         hp = 100.0f;
         jumpHeight = 15.0f;
         target = null;
     }
 
+    private void Update()
+    {
+        if(stormlight < 0)
+        {
+            stormlight = 0.0f;
+        }
+    }
 }

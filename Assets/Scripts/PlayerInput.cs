@@ -16,7 +16,7 @@ public class PlayerInput : MonoBehaviour
     public Vector3 nextPosition;
     public Quaternion nextRotation;
 
-    public float rotationPower = 3f;
+    public float rotationPower = 1.0f;
     public float rotationLerp = 0.5f;
 
     public float speed = 1f;
@@ -103,17 +103,12 @@ public class PlayerInput : MonoBehaviour
 
     public void OnActivate(InputValue value)
     {
-        if(value.Get<float>() > 0)
-        {
-            GetComponent<PowerUsage>().activate = true;
-        }
-
-        else
-        {
-            GetComponent<PowerUsage>().activate = false;
-        }
+        if(stats.stormlight > 0.0f) GetComponent<PowerUsage>().currentPower.Activate();
     }
-
+    public void OnDeactivate(InputValue value)
+    {
+        GetComponent<PowerUsage>().currentPower.Deactivate();
+    }
     public GameObject followTransform;
 
     private void Update()
@@ -142,9 +137,9 @@ public class PlayerInput : MonoBehaviour
 
         var angle = followTransform.transform.localEulerAngles.x;
         //Clamp the Up/Down rotation
-        if (angle > 180 && angle < 300)
+        if (angle > 180 && angle < 280)
         {
-            angles.x = 300;
+            angles.x = 280;
         }
         else if (angle < 180 && angle > 40)
         {

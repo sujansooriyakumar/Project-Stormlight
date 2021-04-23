@@ -7,25 +7,18 @@ public class PowerUsage : MonoBehaviour
     IPower[] powerPool;
     GameObject target;
     PlayerStats stats;
-    IPower currentPower;
+    public IPower currentPower;
     public bool activate;
 
     private void Start()
     {
-        powerPool = new IPower[1];
+        powerPool = new IPower[2];
         powerPool[0] = new ILoadLight(this);
+        powerPool[1] = new IBasicLashingSelf(this);
         stats = GetComponent<PlayerStats>();
-        currentPower = powerPool[0];
+        currentPower = powerPool[1];
     }
 
-    private void Update()
-    {
-       target = stats.target;
-        if (activate)
-        {
-            currentPower.Activate();
-        }
-    }
 
     public GameObject GetTarget()
     {
@@ -35,5 +28,13 @@ public class PowerUsage : MonoBehaviour
     public PlayerInput GetPlayerInput()
     {
         return GetComponent<PlayerInput>();
+    }
+
+    private void Update()
+    {
+        if (currentPower.GetActive())
+        {
+            stats.stormlight -= 0.0005f;
+        }
     }
 }

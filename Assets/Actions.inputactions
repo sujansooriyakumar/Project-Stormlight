@@ -75,7 +75,15 @@
                     "id": "a2edba62-a035-4c45-85bf-17a2cc99e150",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press(behavior=2)"
+                    "interactions": "Press"
+                },
+                {
+                    "name": "Deactivate",
+                    "type": "Button",
+                    "id": "ddbec428-2cf9-4529-93bc-e2b48e100538",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press"
                 }
             ],
             "bindings": [
@@ -362,6 +370,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Activate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "83d674bf-a30c-45cb-8988-c1dd10bd1b49",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Deactivate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
